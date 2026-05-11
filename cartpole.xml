@@ -1,0 +1,54 @@
+<mujoco model="cartpole">
+
+  <option timestep="0.01" integrator="RK4"/>
+  
+  <!-- 1. 调整视觉参数，增加环境光（让阴影不那么黑） -->
+  <visual>
+    <headlight ambient="0.4 0.4 0.4" diffuse="0.8 0.8 0.8" specular="0.1 0.1 0.1"/>
+  </visual>
+   
+  <worldbody>
+    <!-- 2. 主光源：位置调高，增加平行光感 -->
+    <light name="top_light" pos="0 0 4" dir="0 0 -1" diffuse="0.9 0.9 0.9" castshadow="true"/>
+    <!-- 3. 辅助光源：从侧前方照射，补全阴影细节 -->
+    <light name="side_light" pos="2 2 2" dir="-1 -1 -1" diffuse="0.3 0.3 0.3" castshadow="false"/>
+    
+    <geom name="floor" type="plane" size="5 5 0.01" rgba="0.9 0.9 0.9 1"/>
+    
+    <!-- ======= 轨道系统 ======= -->
+    <!-- 轨道主体：位于 z=0.8，长度覆盖 -3 到 3 -->
+    <geom name="rail" type="capsule" fromto="-1.5 0 0.73 1.5 0 0.73" size="0.02" rgba="0.3 0.3 0.3 1"/>
+    <!-- 左侧支柱 -->
+    <geom name="left_support" type="cylinder" fromto="-1.5 0 0 -1.5 0 0.73" size="0.05" rgba="0.5 0.5 0.5 1"/>
+    <!-- 右侧支柱 -->
+    <geom name="right_support" type="cylinder" fromto="1.5 0 0 1.5 0 0.73" size="0.05" rgba="0.5 0.5 0.5 1"/>
+    <!-- ============================ -->
+    
+    <!--============小车=========-->
+    <body name="cart" pos="0 0 0.8">
+      <inertial pos="0 0 0" mass="0.75" diaginertia="1e-8 1e-8 1e-8"/> <!-- 保持惯量恒定 -->
+      <joint name="slider" type="slide" damping="5.4" range="-1.0 1.0" axis="1 0 0" />
+      <geom name="cart_geom" type="box" size="0.1 0.05 0.05" rgba="0.2 0.6 0.8 1"/>
+      
+      <!--===========摆杆=================-->
+      <body name="pole" pos="0 -0.05 0">
+        <!-- pos 是质心相对于 body 原点的位置 -->
+        <inertial pos="0 0 0.1778" mass="0.127" diaginertia="1e-8 1.2e-03 1.2e-03"/>
+        <joint name="hinge" type="hinge" damping="0.0024" axis="0 1 0" />
+        <geom name="pole_geom" type="capsule" size="0.01 0.3" fromto="0 0 0 0 0 0.3365" rgba="0.8 0.2 0.2 1"/>
+      </body>
+    </body>
+  </worldbody>
+  
+  <!-- 如果为了更好的在Mujoco中使用Reset进行完整的视觉感受，则可以添加关键帧定义-->
+  <keyframe>
+    <!-- name可以自定义，qpos 对应 [小车位置, 摆杆角度] -->
+    <!-- 这里的 0.5 表示我们希望重置后摆杆处于 0.5 弧度的位置 -->
+    <key name="home" qpos="0 0.15" qvel="0 0"/>
+  </keyframe>
+  
+  <actuator>
+    <motor name="motor" joint="slider" gear="1"/>
+  </actuator>
+  
+</mujoco>

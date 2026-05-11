@@ -14,7 +14,7 @@ import random
 import copy
 import os
 
-max_action = 30.0
+max_action = 10.0
 # --- 1. 环境定义 ---
 class CartPoleRL:
     def __init__(self, model_path):

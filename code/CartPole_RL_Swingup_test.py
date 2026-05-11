@@ -17,7 +17,7 @@ import math
 import time
 import matplotlib.pyplot as plt
 
-max_action = 30.0
+max_action = 10.0
 # --- 1. 必须导入与训练时完全一致的网络架构 ---
 class Actor(torch.nn.Module):
     def __init__(self, state_dim, action_dim, max_action):
@@ -117,7 +117,7 @@ def test():
             
             # 1. 检查运行时间 (现实时间)
             elapsed_time = time.time() - start_real_time
-            if elapsed_time > 3.0:
+            if elapsed_time > 20.0:
                 print(f"🕒 已达到 20 秒限时，仿真结束。")
                 break
             # 1. 网络预测动作 (无噪声)
@@ -125,6 +125,7 @@ def test():
             with torch.no_grad():
                 action = actor(state_tensor).cpu().numpy().flatten()
             
+            print(f"当前控制力：{action[0]}")
             f_history.append(float(action[0]))
             # 2. 环境步进
             # 3. 物理步进并检查“出界”

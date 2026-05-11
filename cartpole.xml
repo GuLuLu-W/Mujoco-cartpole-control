@@ -44,7 +44,7 @@
   <keyframe>
     <!-- name可以自定义，qpos 对应 [小车位置, 摆杆角度] -->
     <!-- 这里的 0.5 表示我们希望重置后摆杆处于 0.5 弧度的位置 -->
-    <key name="home" qpos="0 0.15" qvel="0 0"/>
+    <key name="home" qpos="0 3.14" qvel="0 0"/>
   </keyframe>
   
   <actuator>

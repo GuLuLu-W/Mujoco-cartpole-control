@@ -36,7 +36,7 @@ ke = 10.5           # 起摆能量增益 (增大此值起摆更快)
 kv_cart = 10.0     # 起摆时的水平阻尼，防止小车跑太远
 angle_threshold = 20 * np.pi / 180  # 切换到 PID 的角度阈值 (约20度)
 
-model = mujoco.MjModel.from_xml_path("cartpole.xml")
+model = mujoco.MjModel.from_xml_path("../cartpole.xml")
 data = mujoco.MjData(model)
 
 print(type(data))
@@ -86,7 +86,9 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
     
     while viewer.is_running():
         step_start = time.time()
-        
+        if data.time == 0.0:
+            mujoco.mj_resetDataKeyframe(model, data, 0)
+            mujoco.mj_forward(model, data)
         # 1. 检查运行时间限制 (20秒)
         if data.time - start_sim_time > 20.0:
             print("🕒 已达到20秒运行时间，仿真结束。")
@@ -150,7 +152,7 @@ with mujoco.viewer.launch_passive(model, data) as viewer:
             
             last_error_cart = err1
             last_error_pole = err2
-            
+        
         f_history.append(control)
         
         # 限幅与执行

@@ -14,12 +14,13 @@ import random
 import copy
 import os
 
+max_action = 30.0
 # --- 1. 环境定义 ---
 class CartPoleRL:
     def __init__(self, model_path):
-        self.model = mujoco.MjModel.from_xml_path(model_path)
+        self.model = mujoco.MjModel.from_xml_path("../cartpole.xml")
         self.data = mujoco.MjData(self.model)
-        self.action_space_high = 300.0  
+        self.action_space_high = max_action
 
     def reset(self):
         mujoco.mj_resetData(self.model, self.data)
@@ -91,7 +92,6 @@ env = CartPoleRL("cartpole.xml") # 请确保路径正确
 
 state_dim = 4
 action_dim = 1
-max_action = 300.0
 
 # 实例化网络
 actor = Actor(state_dim, action_dim, max_action).to(device)
@@ -105,7 +105,7 @@ optimizer_critic = optim.Adam(critic.parameters(), lr=1e-3)
 replay_buffer = collections.deque(maxlen=100000)
 
 # 超参数
-episodes = 3000
+episodes = 1500
 batch_size = 64
 gamma = 0.99
 tau = 0.005
@@ -176,7 +176,7 @@ for episode in range(episodes):
     # 保存逻辑
     if episode_reward > best_reward:
         best_reward = episode_reward
-        torch.save(actor.state_dict(), "best_actor.pth")
+        torch.save(actor.state_dict(), "../model/best_actor.pth")
         
     if episode % 20 == 0:
         print(f"Episode: {episode}, Reward: {episode_reward:.2f}, Noise: {exploration_noise:.2f}")

@@ -234,9 +234,9 @@ for episode in range(episodes):
     exploration_noise *= 0.996
     
     # 保存逻辑
-    if episode_reward > best_reward and episode > 100:
-        best_reward = episode_reward
-        torch.save(actor.state_dict(), "../model/best_actor_obs.pth")
+    if Donereason == "完成任务✔":
+        # best_reward = episode_reward
+        torch.save(actor.state_dict(), f"../model/{episode}_best_actor_obs.pth")
         
     print(f"Episode: {episode}, Reward: {episode_reward:.2f}, step_count:{t}, Noise: {exploration_noise:.2f}, Done Reason: {Donereason}")
 
